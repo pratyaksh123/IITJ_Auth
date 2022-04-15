@@ -5,6 +5,20 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#fff</color>
+    <color name="colorPrimaryDark">#fff</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!--Application custom theme colors-->
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="accent">#536dfe</color>
+    <color name="bottomNavigationColor">#536dfe</color>
+    <color name="hyperLinkText">#303F9F</color>
+
+    <color name="bgColor">#ffffff</color>
+
+    <bool name="isNotNight">true</bool>
 </resources>

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">IITJ_Auth</string>
+    <string name="initial_setup">Initial Setup</string>
+    <string name="name">Name</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="proceed">Proceed</string>
 </resources>
