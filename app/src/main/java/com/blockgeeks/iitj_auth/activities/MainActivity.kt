@@ -1,20 +1,18 @@
-package com.blockgeeks.iitj_auth
+package com.blockgeeks.iitj_auth.activities
 
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.services.MyForegroundService
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-
 
 const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var logoutButton: Button
@@ -28,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             val foregroundServiceIntent = Intent(this, MyForegroundService::class.java)
             foregroundServiceIntent.putExtra("inputExtra", "Some Input")
             ContextCompat.startForegroundService(this, foregroundServiceIntent)
-            Log.i(TAG, "${isServiceRunningInForeground(this, MyForegroundService::class.java)}")
+//            Log.i(TAG, "isForegroundServiceRunning: ${isServiceRunningInForeground(this, MyForegroundService::class.java)}")
 
         }
         logoutButton.setOnClickListener {
@@ -37,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun isServiceRunningInForeground(context: Context, serviceClass: Class<*>): Boolean {
+    private fun isServiceRunningInForeground(context: Context, serviceClass: Class<*>): Boolean {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         for (service in manager.getRunningServices(Int.MAX_VALUE)) {
             if (serviceClass.name == service.service.className) {

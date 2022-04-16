@@ -37,8 +37,13 @@ fun authenticate(applicationContext: Context) {
                 .addHeader("Accept-Language", "en-US,en;q=0.9")
                 .build()
             val response: Response = client.newCall(request).execute()
+            Log.i(TAG, "Gstatic response: ${response}")
             val redirectUrl = response.networkResponse?.request?.url
-            auth(redirectUrl.toString(), password, username)
+            val responseCode = response.code
+
+            if(responseCode != 204){
+                auth(redirectUrl.toString(), password, username)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -46,8 +51,7 @@ fun authenticate(applicationContext: Context) {
     thread.start()
 }
 
-private fun auth(redirectUrl: String, password:String, username:String) {
-    Log.i(TAG, "$redirectUrl")
+private fun auth(redirectUrl: String, password:String, username:String):Response {
     val magic = redirectUrl.split("?")[1]
     val client = OkHttpClient().newBuilder()
         .build()
@@ -90,5 +94,16 @@ private fun auth(redirectUrl: String, password:String, username:String) {
         .addHeader("Accept-Language", "en-US,en;q=0.9")
         .build()
     val response = client.newCall(request).execute()
+    if(response.code == 200){
+        Log.i(TAG,"Successfully logged in!")
+    }
     Log.i(TAG, "$response")
+    return response
 }
+
+
+/*
+Captive portal response
+2022-04-17 03:34:39.687 31659-31729/com.blockgeeks.iitj_auth I/BroadCastReceiver: Gstatic response: Response{protocol=http/1.1, code=200, message=OK, url=https://gateway.iitj.ac.in:1003/fgtauth?040b2fb341c63b78}
+2022-04-17 03:34:39.970 31659-31729/com.blockgeeks.iitj_auth I/BroadCastReceiver: Response{protocol=http/1.1, code=200, message=OK, url=https://gateway.iitj.ac.in:1003/keepalive?0c03050303000402}
+ */

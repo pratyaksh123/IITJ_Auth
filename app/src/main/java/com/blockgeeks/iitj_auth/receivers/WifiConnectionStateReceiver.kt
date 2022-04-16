@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import com.blockgeeks.iitj_auth.utils.CheckWalledGardenConnection
 import com.blockgeeks.iitj_auth.utils.authenticate
 import com.blockgeeks.iitj_auth.utils.isWalledGardenConnection
 import com.blockgeeks.iitj_auth.workers.LoginInitiatorWorker
@@ -21,16 +22,19 @@ const val TAG = "BroadCastReceiver"
 class WifiConnectionStateReceiver : BroadcastReceiver() {
     override fun onReceive(p0: Context?, intent: Intent?) {
         if (WifiManager.NETWORK_STATE_CHANGED_ACTION == intent?.action) {
-            val networkInfo: NetworkInfo? = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)
+            val networkInfo: NetworkInfo? =
+                intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)
 //            Log.i(TAG, networkInfo?.state.toString())
             if (networkInfo?.state == NetworkInfo.State.CONNECTED) {
-                if(isWalledGardenConnection()){
+                val task = CheckWalledGardenConnection()
+                val result = task.execute().get() // UI blocking
+                Log.i(TAG, "WalledGardenCheck - $result")
+                if (result) {
                     Log.i(TAG, "Captive Portal detected")
-                    Toast.makeText(p0, "Logging in..",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(p0, "Logging in..", Toast.LENGTH_SHORT).show()
 
                     // Run auth one time
-                    authenticate(p0!!)
-
+                    val response = authenticate(p0!!)
                     // Schedule periodic work
 
 //                    val periodicLoginWork = PeriodicWorkRequest.Builder(
@@ -41,22 +45,18 @@ class WifiConnectionStateReceiver : BroadcastReceiver() {
 //                        ExistingPeriodicWorkPolicy.KEEP,
 //                        periodicLoginWork
 //                    )
-
-
-                }else{
+                } else {
                     Log.i(TAG, "Connected!")
-                    authenticate(p0!!)
-                    Toast.makeText(p0, "Connected!",Toast.LENGTH_LONG).show()
+                    Toast.makeText(p0, "Connected!", Toast.LENGTH_LONG).show()
                     // TODO: Update notifications
                 }
-            }else if(networkInfo?.state == NetworkInfo.State.DISCONNECTED){
+            } else if (networkInfo?.state == NetworkInfo.State.DISCONNECTED) {
                 Log.i(TAG, "Disconnected")
-                Toast.makeText(p0, "Disconnected!",Toast.LENGTH_LONG).show()
+                Toast.makeText(p0, "Disconnected!", Toast.LENGTH_LONG).show()
 
             }
         }
     }
-
 
 
 }

@@ -11,8 +11,8 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.blockgeeks.iitj_auth.MainActivity
 import com.blockgeeks.iitj_auth.R
+import com.blockgeeks.iitj_auth.activities.MainActivity
 import com.blockgeeks.iitj_auth.receivers.WifiConnectionStateReceiver
 
 const val TAG = "ForegroundService"
@@ -64,6 +64,15 @@ class MyForegroundService : Service() {
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    override fun onDestroy() {
+        // Cancel WorkManager and then unregister the receiver
+        try {
+            unregisterReceiver(wifiConnectionStateReceiver)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
