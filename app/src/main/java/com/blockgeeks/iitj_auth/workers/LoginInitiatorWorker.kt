@@ -19,13 +19,13 @@ class LoginInitiatorWorker(context: Context, workerParams: WorkerParameters) :
         Log.i(TAG, "Authenticating..")
         val response = authenticate(applicationContext)
         if (response?.code == 200) {
-            Toast.makeText(applicationContext, "Connected!", Toast.LENGTH_LONG).show()
+            Log.i(TAG, "Connected!")
             return Result.success()
         } else if (response?.code == 204) {
-            Toast.makeText(applicationContext, "Already Connected!", Toast.LENGTH_LONG).show()
+            Log.i(TAG, "Already Connected!")
             return Result.success()
         } else {
-            Toast.makeText(applicationContext, "Worker Failed!", Toast.LENGTH_LONG).show()
+            Log.e(TAG, "Worker Failed!, Response - ${response}")
             return Result.failure()
         }
     }
