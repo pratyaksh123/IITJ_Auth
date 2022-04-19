@@ -1,9 +1,11 @@
 package com.blockgeeks.iitj_auth.utils
 
 import android.os.AsyncTask
-import android.os.StrictMode
-import android.os.StrictMode.ThreadPolicy
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -19,13 +21,15 @@ private const val WALLED_GARDEN_SOCKET_TIMEOUT_MS = 10000
  * fetches the data we expect
  */
 
-class CheckWalledGardenConnection() : AsyncTask<Void, Void, Boolean>() {
-    override fun doInBackground(vararg p0: Void?): Boolean {
-        return isWalledGardenConnection()
+suspend fun checkWalledGardenConnectionAsync(): Deferred<Boolean> {
+    val waitFor = CoroutineScope(Dispatchers.IO).async {
+        return@async isWalledGardenConnection()
     }
+    waitFor.await()
+    return waitFor
 }
 
-fun isWalledGardenConnection(): Boolean {
+private fun isWalledGardenConnection(): Boolean {
     var urlConnection: HttpURLConnection? = null
     try {
         val url = URL(mWalledGardenUrl) // "http://clients3.google.com/generate_204"

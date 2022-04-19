@@ -7,51 +7,46 @@ import android.util.Log
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 
-fun authenticate(applicationContext: Context) {
+fun authenticate(applicationContext: Context): Response? {
     val ai: ApplicationInfo = applicationContext.packageManager
         .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
 
     val username = ai.metaData["username"].toString()
     val password = ai.metaData["password"].toString()
 
-    val thread = Thread {
-        try {
-            val client: OkHttpClient = OkHttpClient().newBuilder()
-                .build()
-            val request: Request = Request.Builder()
-                .url("http://www.gstatic.com/generate_204")
-                .method("GET", null)
-                .addHeader("Host", "www.gstatic.com")
-                .addHeader("Connection", "keep-alive")
-                .addHeader("Cache-Control", "max-age=0")
-                .addHeader("Upgrade-Insecure-Requests", "1")
-                .addHeader(
-                    "User-Agent",
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36"
-                )
-                .addHeader(
-                    "Accept",
-                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
-                )
-                .addHeader("Accept-Encoding", "gzip, deflate")
-                .addHeader("Accept-Language", "en-US,en;q=0.9")
-                .build()
-            val response: Response = client.newCall(request).execute()
-            Log.i(TAG, "Gstatic response: ${response}")
-            val redirectUrl = response.networkResponse?.request?.url
-            val responseCode = response.code
-
-            if(responseCode != 204){
-                auth(redirectUrl.toString(), password, username)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    val client: OkHttpClient = OkHttpClient().newBuilder()
+        .build()
+    val request: Request = Request.Builder()
+        .url("http://www.gstatic.com/generate_204")
+        .method("GET", null)
+        .addHeader("Host", "www.gstatic.com")
+        .addHeader("Connection", "keep-alive")
+        .addHeader("Cache-Control", "max-age=0")
+        .addHeader("Upgrade-Insecure-Requests", "1")
+        .addHeader(
+            "User-Agent",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36"
+        )
+        .addHeader(
+            "Accept",
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+        )
+        .addHeader("Accept-Encoding", "gzip, deflate")
+        .addHeader("Accept-Language", "en-US,en;q=0.9")
+        .build()
+    val response: Response = client.newCall(request).execute()
+    Log.i(TAG, "Gstatic response: ${response}")
+    val redirectUrl = response.networkResponse?.request?.url
+    if (response.code == 204) {
+        return response
+    } else if (response.code == 200) {
+        return auth(redirectUrl.toString(), password, username)
     }
-    thread.start()
+    return null
 }
 
-private fun auth(redirectUrl: String, password:String, username:String):Response {
+private fun auth(redirectUrl: String, password: String, username: String): Response {
+    // TODO: Before indexing this url, check if req code was 204 or 200
     val magic = redirectUrl.split("?")[1]
     val client = OkHttpClient().newBuilder()
         .build()
@@ -94,8 +89,8 @@ private fun auth(redirectUrl: String, password:String, username:String):Response
         .addHeader("Accept-Language", "en-US,en;q=0.9")
         .build()
     val response = client.newCall(request).execute()
-    if(response.code == 200){
-        Log.i(TAG,"Successfully logged in!")
+    if (response.code == 200) {
+        Log.i(TAG, "Successfully logged in!")
     }
     Log.i(TAG, "$response")
     return response
