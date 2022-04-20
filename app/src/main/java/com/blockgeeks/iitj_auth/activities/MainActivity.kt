@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.services.MyForegroundService
+import io.sentry.Sentry
 
 const val TAG = "MainActivity"
 
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logoutButton: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        Sentry.captureMessage("testing SDK setup")
         setContentView(R.layout.activity_main)
 
         loginButton = findViewById(R.id.loginButton)

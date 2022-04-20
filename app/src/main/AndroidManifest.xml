@@ -14,6 +14,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IITJ_Auth"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://5b3b116297d64e709bd5628712b404be@o1211564.ingest.sentry.io/6349120" />
+        <!-- Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+           We recommend adjusting this value in production. -->
+        <meta-data
+            android:name="io.sentry.traces.sample-rate"
+            android:value="1.0" />
+
+        <meta-data
+            android:name="password"
+            android:value="${password}" />
+
+        <meta-data
+            android:name="username"
+            android:value="${username}" />
+
         <activity
             android:name=".activities.MainActivity"
             android:exported="true">
@@ -25,13 +43,6 @@
         </activity>
         <service android:name=".services.MyForegroundService" />
 
-        <meta-data
-            android:name="password"
-            android:value="${password}" />
-
-        <meta-data
-            android:name="username"
-            android:value="${username}" />
 
     </application>
 
