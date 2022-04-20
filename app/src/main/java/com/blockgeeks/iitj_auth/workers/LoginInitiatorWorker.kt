@@ -1,15 +1,12 @@
 package com.blockgeeks.iitj_auth.workers
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
-import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.work.CoroutineWorker
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.blockgeeks.iitj_auth.utils.authenticate
+import io.sentry.Sentry
+
 
 const val TAG = "LoginInitiatorWorker"
 
@@ -25,6 +22,7 @@ class LoginInitiatorWorker(context: Context, workerParams: WorkerParameters) :
             Log.i(TAG, "Already Connected!")
             return Result.success()
         } else {
+            Sentry.captureMessage("Worker Failed!, Response - ${response}");
             Log.e(TAG, "Worker Failed!, Response - ${response}")
             return Result.failure()
         }

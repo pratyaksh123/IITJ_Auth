@@ -20,6 +20,7 @@ import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.activities.MainActivity
 import com.blockgeeks.iitj_auth.utils.authenticate
 import com.blockgeeks.iitj_auth.workers.LoginInitiatorWorker
+import io.sentry.Sentry
 import java.util.concurrent.TimeUnit
 
 
@@ -135,6 +136,7 @@ class MyForegroundService : Service() {
         try {
             connectivityManager.unregisterNetworkCallback(networkCallback)
         } catch (e: Exception) {
+            Sentry.captureException(e)
             e.printStackTrace()
         }
     }
