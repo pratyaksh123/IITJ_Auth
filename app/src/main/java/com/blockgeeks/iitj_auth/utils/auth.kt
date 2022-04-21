@@ -7,6 +7,7 @@ import android.util.Log
 import io.sentry.Sentry
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import java.net.UnknownHostException
 
 fun authenticate(applicationContext: Context): Response? {
     val ai: ApplicationInfo = applicationContext.packageManager
@@ -45,15 +46,16 @@ fun authenticate(applicationContext: Context): Response? {
             return auth(redirectUrl.toString(), password, username)
         }
     } catch (e: Exception) {
-        Sentry.captureException(e)
+        // UnknownHostException will occur if on cellular data instead of IITJ Wifi.
+            if(e != UnknownHostException::class.java ){
+                Sentry.captureException(e)
+            }
         e.printStackTrace()
     }
-
     return null
 }
 
 private fun auth(redirectUrl: String, password: String, username: String): Response {
-    // TODO: Before indexing this url, check if req code was 204 or 200
     val magic = redirectUrl.split("?")[1]
     val client = OkHttpClient().newBuilder()
         .build()
@@ -100,6 +102,7 @@ private fun auth(redirectUrl: String, password: String, username: String): Respo
         Log.i(TAG, "Successfully logged in!")
     }
     Log.i(TAG, "$response")
+    response.body?.close()
     return response
 }
 

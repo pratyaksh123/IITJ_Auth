@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logoutButton: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        Sentry.captureMessage("testing SDK setup")
         setContentView(R.layout.activity_main)
 
         loginButton = findViewById(R.id.loginButton)

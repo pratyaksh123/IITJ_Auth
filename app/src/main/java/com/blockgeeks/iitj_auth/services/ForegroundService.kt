@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
@@ -28,10 +29,11 @@ const val TAG = "ForegroundService"
 
 class MyForegroundService : Service() {
     private lateinit var connectivityManager: ConnectivityManager
-
     private var networkCallback: NetworkCallback = object : NetworkCallback() {
+        @RequiresApi(Build.VERSION_CODES.M)
         override fun onAvailable(network: Network) {
             // network available
+            connectivityManager.bindProcessToNetwork(network)
             Log.i(TAG, "Captive Portal detected")
             Toast.makeText(applicationContext, "Logging in..", Toast.LENGTH_LONG).show()
             val response = authenticate(applicationContext)
@@ -59,18 +61,6 @@ class MyForegroundService : Service() {
         override fun onLost(network: Network) {
             Log.e(TAG, "Lost network")
         }
-
-        override fun onCapabilitiesChanged(
-            network: Network,
-            networkCapabilities: NetworkCapabilities
-        ) {
-            Log.e(TAG, "The default network changed capabilities: " + networkCapabilities)
-        }
-
-        override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
-            Log.e(TAG, "The default network changed link properties: " + linkProperties)
-//            Log.i(TAG, linkProperties.dnsServers[1].toString())
-        }
     }
 
 
@@ -93,10 +83,9 @@ class MyForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // All the business logic goes here
 
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            NetworkRequest.Builder()
+            NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL)
         } else {
             TODO("VERSION.SDK_INT < M")
