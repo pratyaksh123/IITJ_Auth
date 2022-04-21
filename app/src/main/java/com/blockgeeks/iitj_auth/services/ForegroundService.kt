@@ -30,7 +30,6 @@ const val TAG = "ForegroundService"
 class MyForegroundService : Service() {
     private lateinit var connectivityManager: ConnectivityManager
     private var networkCallback: NetworkCallback = object : NetworkCallback() {
-        @RequiresApi(Build.VERSION_CODES.M)
         override fun onAvailable(network: Network) {
             // network available
             connectivityManager.bindProcessToNetwork(network)
@@ -64,14 +63,15 @@ class MyForegroundService : Service() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate() {
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
-                PendingIntent.getActivity(this, 0, notificationIntent, 0)
+                PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
             }
 
         createNotificationChannel()
-        var notification = NotificationCompat.Builder(this, "CHANNEL_ID")
+        val notification = NotificationCompat.Builder(this, "CHANNEL_ID")
             .setContentTitle("IIT-J Auth")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentText("Automating Authentication...")
@@ -84,12 +84,9 @@ class MyForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val builder =
             NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL)
-        } else {
-            TODO("VERSION.SDK_INT < M")
-        }
 
         connectivityManager.registerNetworkCallback(
             builder.build(),
