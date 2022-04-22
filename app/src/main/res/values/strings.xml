@@ -1,8 +1,61 @@
 <resources>
-    <string name="app_name">IITJ_Auth</string>
+    <string name="app_name">IITJ FireAuth</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <!--Application specific strings-->
     <string name="initial_setup">Initial Setup</string>
     <string name="name">Name</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="proceed">Proceed</string>
+    <string name="about_app_desc">IITJ FireAuth lets you enjoy continuous internet connectivity without any further need to authenticate on Fortinet repeatedly.</string>
+    <string name="dev_by">Developed by:- <b>Pratyaksh tyagi</b></string>
+    <string name="let_s_get_social_with_the_dev">Let\'s get social with the dev ;)</string>
+    <string name="coded_with_for_glau">Coded with 🔥, 🧠 &amp; ❤️ for IITJ</string>
+    <string name="linkedin_url">LinkedIn Url</string>
+    <string name="twitter_url">Twitter Url</string>
+    <string name="facebook_url">Facebook Url</string>
+    <string name="instagram_url">Instagram Url</string>
+    <string name="active">Active</string>
+    <string name="status">Status:</string>
+    <string name="inactive">Inactive</string>
+    <string name="toggle_the_service_using_the_switch_above">Toggle the service using the switch above.</string>
+    <string name="caution_message"><b>Please note</b>\n• Keep the Mobile Data off while using this app!\n• Turn off Battery Optimization for this App!</string>
+    <string name="click_to_open_battery_optimization_settings">CLICK TO OPEN POWER SETTINGS</string>
+    <string name="service_killed_help_desc">Some of the devices might not allow the service to run all the time due to background computation restrictions by manufacturers, for instance you may white list the app from <b>Settings > Battery > Battery Optimization > \'Don\'t Optimize this app\'</b> \n\n OR\n</string>
+    <string name="invalid_name">Invalid Name</string>
+    <string name="this_cannot_be_empty">This cannot be empty</string>
+    <string name="login_url_glau">http://172.16.10.20:1000/login?011abaee7cf9a5fc</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="github_url">GitHub Url</string>
+    <string name="about">About</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="settings">Settings</string>
+    <string name="profile_preferences">Profile Preferences</string>
+    <string name="profile_1">Fortinet Profile Details</string>
+    <string name="troubleshooting">Troubleshooting</string>
+    <string name="rate_the_app_on_play_store">Rate the app on Play Store</string>
+    <string name="having_problems">Having Problems?</string>
+    <string name="service_getting_killed_randomly">Service getting killed randomly?</string>
+    <string name="powered_by">powered by</string>
+    <string name="evening_technologies">Evening Technologies</string>
+    <string name="glau_fireauth_logo">glau_fireauth_logo</string>
+    <string name="version">version</string>
+    <string name="general">General</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="view_privacy_policy">View Privacy Policy</string>
+    <string name="notification_info_text">Having trouble? Please read the troubleshooting section for more help!</string>
+    <string name="click_here_to_find_out_how_to_turn_off_battery_optimization_on_your_device">Click here to find out, \'How to Turn off Battery Optimization on your device\'.</string>
+    <string name="github_repository_link">GitHub Repository Link</string>
+    <string name="source_code">Source code</string>
+    <string name="ad_banner_id_1">ca-app-pub-2369194065944897/1068901873</string>
+    <string name="ad_banner_id_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_interstitial_id_1">ca-app-pub-2369194065944897/3328341508</string>
+    <string name="ad_interstitial_id_test">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="ads_to_be_shown_here">Ads to be shown here! \nIf you can read this, please feel free to close this! :)</string>
+    <string name="admob_app_id">ca-app-pub-2369194065944897~3644623004</string>
+
 </resources>

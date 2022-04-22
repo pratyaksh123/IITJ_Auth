@@ -63,7 +63,6 @@ class MyForegroundService : Service() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate() {
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->

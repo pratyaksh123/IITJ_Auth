@@ -1,32 +1,60 @@
 package com.blockgeeks.iitj_auth.activities
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.blockgeeks.iitj_auth.R
-import com.blockgeeks.iitj_auth.services.MyForegroundService
-import io.sentry.Sentry
+import com.blockgeeks.iitj_auth.fragments.AboutFragment
+import com.blockgeeks.iitj_auth.fragments.DashboardFragment
+import com.blockgeeks.iitj_auth.fragments.SettingsFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarView
 
 const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var logoutButton: Button
+    private lateinit var bottomNavigationView: BottomNavigationView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        loginButton = findViewById(R.id.loginButton)
-        logoutButton = findViewById(R.id.loginButton2)
-        loginButton.setOnClickListener {
-            val foregroundServiceIntent = Intent(this, MyForegroundService::class.java)
-            ContextCompat.startForegroundService(this, foregroundServiceIntent)
+        val aboutFragment = AboutFragment()
+        val dashboardFragment = DashboardFragment()
+        val settingsFragment = SettingsFragment()
+
+        setContentView(R.layout.activity_main)
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+        bottomNavigationView.menu.getItem(1).isChecked = true
+        setCurrentFragment(dashboardFragment)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_about -> setCurrentFragment(aboutFragment)
+                R.id.navigation_dashboard -> setCurrentFragment(dashboardFragment)
+                R.id.navigation_settings -> setCurrentFragment(settingsFragment)
+            }
+            true
         }
-        logoutButton.setOnClickListener {
-            val serviceIntent = Intent(this, MyForegroundService::class.java)
-            stopService(serviceIntent)
+//        loginButton = findViewById(R.id.loginButton)
+//        logoutButton = findViewById(R.id.loginButton2)
+//        loginButton.setOnClickListener {
+//            val foregroundServiceIntent = Intent(this, MyForegroundService::class.java)
+//            ContextCompat.startForegroundService(this, foregroundServiceIntent)
+//        }
+//        logoutButton.setOnClickListener {
+//            val serviceIntent = Intent(this, MyForegroundService::class.java)
+//            stopService(serviceIntent)
+//        }
+    }
+
+    private fun setCurrentFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.container,fragment).commit()
         }
     }
+
 }
+
