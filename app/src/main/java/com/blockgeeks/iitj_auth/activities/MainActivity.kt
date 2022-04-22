@@ -16,8 +16,6 @@ import com.google.android.material.navigation.NavigationBarView
 const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var loginButton: Button
-    private lateinit var logoutButton: Button
     private lateinit var bottomNavigationView: BottomNavigationView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,21 +36,11 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-//        loginButton = findViewById(R.id.loginButton)
-//        logoutButton = findViewById(R.id.loginButton2)
-//        loginButton.setOnClickListener {
-//            val foregroundServiceIntent = Intent(this, MyForegroundService::class.java)
-//            ContextCompat.startForegroundService(this, foregroundServiceIntent)
-//        }
-//        logoutButton.setOnClickListener {
-//            val serviceIntent = Intent(this, MyForegroundService::class.java)
-//            stopService(serviceIntent)
-//        }
     }
 
-    private fun setCurrentFragment(fragment: Fragment){
+    private fun setCurrentFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().apply {
-            replace(R.id.container,fragment).commit()
+            replace(R.id.container, fragment).commit()
         }
     }
 

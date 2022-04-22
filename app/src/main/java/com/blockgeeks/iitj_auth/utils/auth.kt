@@ -9,12 +9,9 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.net.UnknownHostException
 
-fun authenticate(applicationContext: Context): Response? {
+fun authenticate(applicationContext: Context, username:String, password: String): Response? {
     val ai: ApplicationInfo = applicationContext.packageManager
         .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
-
-    val username = ai.metaData["username"].toString()
-    val password = ai.metaData["password"].toString()
 
     try {
         val client: OkHttpClient = OkHttpClient().newBuilder()
@@ -47,9 +44,9 @@ fun authenticate(applicationContext: Context): Response? {
         }
     } catch (e: Exception) {
         // UnknownHostException will occur if on cellular data instead of IITJ Wifi.
-            if(e != UnknownHostException::class.java ){
-                Sentry.captureException(e)
-            }
+        if (e != UnknownHostException::class.java) {
+            Sentry.captureException(e)
+        }
         e.printStackTrace()
     }
     return null

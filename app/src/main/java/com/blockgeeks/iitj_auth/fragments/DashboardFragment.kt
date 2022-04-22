@@ -1,20 +1,15 @@
 package com.blockgeeks.iitj_auth.fragments
 
 import android.app.ActivityManager
-import android.content.ActivityNotFoundException
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.ACTION_POWER_USAGE_SUMMARY
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.services.MyForegroundService
@@ -28,7 +23,7 @@ class DashboardFragment : Fragment() {
     private lateinit var foregroundServiceIntent: Intent
     private lateinit var statusInfoInactiveTextView: TextView
     private lateinit var statusInfoActiveTextView: TextView
-    private lateinit var gotoBatterySettingsTextView:TextView
+    private lateinit var gotoBatterySettingsTextView: TextView
 
 
     override fun onAttach(context: Context) {
@@ -50,7 +45,7 @@ class DashboardFragment : Fragment() {
         gotoBatterySettingsTextView = view.findViewById(R.id.gotoBatterySettingsTextView)
 
         //Adding intent to Battery Settings
-        gotoBatterySettingsTextView.setOnClickListener{
+        gotoBatterySettingsTextView.setOnClickListener {
 
         }
 

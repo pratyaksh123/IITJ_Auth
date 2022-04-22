@@ -29,31 +29,44 @@ const val TAG = "ForegroundService"
 
 class MyForegroundService : Service() {
     private lateinit var connectivityManager: ConnectivityManager
+    private var username: String? = null
+    private var password: String? = null
     private var networkCallback: NetworkCallback = object : NetworkCallback() {
         override fun onAvailable(network: Network) {
-            // network available
-            connectivityManager.bindProcessToNetwork(network)
-            Log.i(TAG, "Captive Portal detected")
-            Toast.makeText(applicationContext, "Logging in..", Toast.LENGTH_LONG).show()
-            val response = authenticate(applicationContext)
-            if (response?.code == 200) {
-                // Dismiss the captive portal using the Captive portal API
-                Log.i(TAG, "Connected!")
-                Toast.makeText(applicationContext, "Connected!", Toast.LENGTH_LONG).show()
-            } else if (response?.code == 204) {
-                // Already Authenticated
-                Log.i(TAG, "Already Connected!")
+            // Captive portal Detected
+            // First check if username and password are non null
+            if (username == null || password == null) {
+                Log.i(TAG, "username and password are null")
+                Toast.makeText(
+                    applicationContext,
+                    "Username or Password not set!",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                connectivityManager.bindProcessToNetwork(network)
+                Log.i(TAG, "Captive Portal detected")
+                Toast.makeText(applicationContext, "Logging in..", Toast.LENGTH_LONG).show()
+                val response = authenticate(applicationContext, username!!, password!!)
+                if (response?.code == 200) {
+                    // Dismiss the captive portal using the Captive portal API
+                    Log.i(TAG, "Connected!")
+                    Toast.makeText(applicationContext, "Connected!", Toast.LENGTH_LONG).show()
+                } else if (response?.code == 204) {
+                    // Already Authenticated
+                    Log.i(TAG, "Already Connected!")
+                }
+
+                // Use WorkManager to schedule work
+                val periodicLoginWork = PeriodicWorkRequest.Builder(
+                    LoginInitiatorWorker::class.java, 15, TimeUnit.MINUTES, 5, TimeUnit.MINUTES
+                ).build()
+                WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+                    "periodicLoginWorkName",
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    periodicLoginWork
+                )
             }
 
-            // Use WorkManager to schedule work
-            val periodicLoginWork = PeriodicWorkRequest.Builder(
-                LoginInitiatorWorker::class.java, 15, TimeUnit.MINUTES, 5, TimeUnit.MINUTES
-            ).build()
-            WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-                "periodicLoginWorkName",
-                ExistingPeriodicWorkPolicy.KEEP,
-                periodicLoginWork
-            )
         }
 
 
@@ -64,6 +77,10 @@ class MyForegroundService : Service() {
 
 
     override fun onCreate() {
+        val sharedPreferences =
+            applicationContext.getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
+        username = sharedPreferences.getString("username1", null)
+        password = sharedPreferences.getString("password1", null)
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)

@@ -13,8 +13,18 @@ const val TAG = "LoginInitiatorWorker"
 class LoginInitiatorWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
+        val sharedPreferences =
+            applicationContext.getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
+        val username = sharedPreferences.getString("username1", null)
+        val password = sharedPreferences.getString("password1", null)
+        // username and password null check
+        if (username == null || password == null){
+            Log.e(TAG, "Username or Password not set!")
+            return Result.failure()
+        }
+
         Log.i(TAG, "Authenticating..")
-        val response = authenticate(applicationContext)
+        val response = authenticate(applicationContext, username, password)
         if (response?.code == 200) {
             Log.i(TAG, "Connected!")
             return Result.success()
