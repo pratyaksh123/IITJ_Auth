@@ -13,7 +13,7 @@
     <string name="about_app_desc">IITJ FireAuth lets you enjoy continuous internet connectivity without any further need to authenticate on Fortinet repeatedly.</string>
     <string name="dev_by">Developed by:- <b>Pratyaksh tyagi</b></string>
     <string name="let_s_get_social_with_the_dev">Let\'s get social ;)</string>
-    <string name="coded_with_for_glau">Coded with 🔥, 🧠 &amp; ❤️ for IITJ</string>
+    <string name="coded_with_for_iitj">Coded with 🔥, 🧠 &amp; ❤️ for IITJ</string>
     <string name="linkedin_url">LinkedIn Url</string>
     <string name="twitter_url">Twitter Url</string>
     <string name="facebook_url">Facebook Url</string>
@@ -27,7 +27,6 @@
     <string name="service_killed_help_desc">Some of the devices might not allow the service to run all the time due to background computation restrictions by manufacturers, for instance you may white list the app from <b>Settings > Battery > Battery Optimization > \'Don\'t Optimize this app\'</b> \n\n OR\n</string>
     <string name="invalid_name">Invalid Name</string>
     <string name="this_cannot_be_empty">This cannot be empty</string>
-    <string name="login_url_glau">http://172.16.10.20:1000/login?011abaee7cf9a5fc</string>
     <string name="personal_information">Personal Information</string>
     <string name="personal_info">Personal Info</string>
     <string name="github_url">GitHub Url</string>
@@ -42,7 +41,7 @@
     <string name="service_getting_killed_randomly">Service getting killed randomly?</string>
     <string name="powered_by">powered by</string>
     <string name="evening_technologies">Evening Technologies</string>
-    <string name="glau_fireauth_logo">glau_fireauth_logo</string>
+    <string name="iitj_auth_logo">iitj_auth_logo</string>
     <string name="version">version</string>
     <string name="general">General</string>
     <string name="privacy_policy">Privacy Policy</string>
@@ -51,11 +50,5 @@
     <string name="click_here_to_find_out_how_to_turn_off_battery_optimization_on_your_device">Click here to find out, \'How to Turn off Battery Optimization on your device\'.</string>
     <string name="github_repository_link">GitHub Repository Link</string>
     <string name="source_code">Source code</string>
-    <string name="ad_banner_id_1">ca-app-pub-2369194065944897/1068901873</string>
-    <string name="ad_banner_id_test">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="ad_interstitial_id_1">ca-app-pub-2369194065944897/3328341508</string>
-    <string name="ad_interstitial_id_test">ca-app-pub-3940256099942544/1033173712</string>
-    <string name="ads_to_be_shown_here">Ads to be shown here! \nIf you can read this, please feel free to close this! :)</string>
-    <string name="admob_app_id">ca-app-pub-2369194065944897~3644623004</string>
 
 </resources>

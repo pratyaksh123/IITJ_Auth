@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         if(!initialSetupBoolean) {
             intent = Intent(applicationContext, InitialSetupActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         setContentView(R.layout.activity_main)
