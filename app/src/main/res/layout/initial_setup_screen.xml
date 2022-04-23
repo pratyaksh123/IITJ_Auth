@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bgColor">
+    android:background="@color/bgColor"
+    tools:context=".activities.InitialSetupActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/initialSetupToolbar"
@@ -49,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Personal information"
+                android:text="@string/personal_information"
                 android:textAllCaps="true"
                 android:textColor="@color/primary_text"
                 android:textStyle="bold" />
@@ -78,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Fortinet profile details"
+                android:text="@string/profile_1"
                 android:textAllCaps="true"
                 android:textColor="@color/primary_text"
                 android:textStyle="bold" />

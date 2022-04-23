@@ -188,7 +188,6 @@ class SettingsFragment : Fragment() {
             .setNegativeButton(
                 "Cancel"
             ) { _, _ ->
-                Toast.makeText(context, "Operation Cancelled!", Toast.LENGTH_SHORT).show()
             }.create()
         Objects.requireNonNull(alertDialog.window)
             ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)

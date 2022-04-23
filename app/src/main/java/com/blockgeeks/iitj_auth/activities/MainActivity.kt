@@ -1,28 +1,35 @@
 package com.blockgeeks.iitj_auth.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.MenuItem
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.fragments.AboutFragment
 import com.blockgeeks.iitj_auth.fragments.DashboardFragment
 import com.blockgeeks.iitj_auth.fragments.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarView
 
 const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
-
         val aboutFragment = AboutFragment()
         val dashboardFragment = DashboardFragment()
         val settingsFragment = SettingsFragment()
+
+        val sharedPreferences = applicationContext.getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
+        val initialSetupBoolean = sharedPreferences.getBoolean("initial_setup", false)
+
+        if(!initialSetupBoolean) {
+            intent = Intent(applicationContext, InitialSetupActivity::class.java)
+            startActivity(intent)
+        }
 
         setContentView(R.layout.activity_main)
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
