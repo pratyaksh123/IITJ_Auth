@@ -145,3 +145,4 @@ class MyForegroundService : Service() {
 }
 
 //2022-04-20 02:11:23.740 30618-30880/com.blockgeeks.iitj_auth E/ForegroundService: The default network changed link properties: {InterfaceName: wlan0 LinkAddresses: [fe80::20a:f5ff:fe89:89ff/64,172.30.13.233/19,]  Routes: [fe80::/64 -> :: wlan0,172.30.0.0/19 -> 0.0.0.0 wlan0,0.0.0.0/0 -> 172.30.0.1 wlan0,] DnsAddresses: [172.16.100.4,172.16.100.3,8.8.8.8,] UsePrivateDns: false PrivateDnsServerName: null Domains: null MTU: 0 TcpBufferSizes: 524288,2097152,4194304,262144,524288,1048576}
+// <a href="https://www.flaticon.com/free-icons/shield" title="shield icons">Shield icons created by Freepik - Flaticon</a>

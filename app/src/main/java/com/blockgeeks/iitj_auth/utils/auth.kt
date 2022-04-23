@@ -9,6 +9,8 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.net.UnknownHostException
 
+const val TAG = "Auth.kt"
+
 fun authenticate(applicationContext: Context, username:String, password: String): Response? {
     val ai: ApplicationInfo = applicationContext.packageManager
         .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
