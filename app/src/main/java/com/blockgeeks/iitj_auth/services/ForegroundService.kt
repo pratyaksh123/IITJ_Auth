@@ -1,9 +1,6 @@
 package com.blockgeeks.iitj_auth.services
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.net.*
@@ -12,8 +9,8 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
@@ -31,6 +28,9 @@ class MyForegroundService : Service() {
     private lateinit var connectivityManager: ConnectivityManager
     private var username: String? = null
     private var password: String? = null
+    var foregroundServiceId: Int = 1001
+    var notificationChannelIdForHelperService = "1000"
+
     private var networkCallback: NetworkCallback = object : NetworkCallback() {
         override fun onAvailable(network: Network) {
             // Captive portal Detected
@@ -50,6 +50,7 @@ class MyForegroundService : Service() {
                 if (response?.code == 200) {
                     // Dismiss the captive portal using the Captive portal API
                     Log.i(TAG, "Connected!")
+                    updateNotification("Login Successful! ✅")
                     Toast.makeText(applicationContext, "Connected!", Toast.LENGTH_LONG).show()
                 } else if (response?.code == 204) {
                     // Already Authenticated
@@ -69,7 +70,6 @@ class MyForegroundService : Service() {
 
         }
 
-
         override fun onLost(network: Network) {
             Log.e(TAG, "Lost network")
         }
@@ -87,14 +87,23 @@ class MyForegroundService : Service() {
             }
 
         createNotificationChannel()
-        val notification = NotificationCompat.Builder(this, "CHANNEL_ID")
-            .setContentTitle("IIT-J Auth")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentText("Automating Authentication...")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        val foregroundServiceNotification: Notification = NotificationCompat.Builder(
+            applicationContext,
+            notificationChannelIdForHelperService
+        )
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .setContentTitle("Service is up and running 😉")
+            .setContentText("Status: Awaiting Update")
             .setContentIntent(pendingIntent)
+            .setGroup("helperServiceGroup")
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .setBigContentTitle("Status: Awaiting Update")
+                    .bigText(getString(R.string.notification_info_text))
+            )
+            .build()
 
-        startForeground(1001, notification.build())
+        startForeground(foregroundServiceId, foregroundServiceNotification)
         connectivityManager = this.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
@@ -121,17 +130,48 @@ class MyForegroundService : Service() {
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "IIT-J Auth"
-            val descriptionText = "Testing 123"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("CHANNEL_ID", name, importance).apply {
-                description = descriptionText
-            }
+            val channel = NotificationChannel(
+                notificationChannelIdForHelperService,
+                name,
+                importance
+            ).apply {}
 
             // Register the channel with the system
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    fun updateNotification(message: String?) {
+        var notificationMessage = message
+        val mainActivityIntent = Intent(applicationContext, MainActivity::class.java)
+        val mainActivityPendingIntent = PendingIntent.getActivity(
+            applicationContext,
+            300,
+            mainActivityIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        if (notificationMessage == null || notificationMessage == "") {
+            notificationMessage = "Unknown"
+        }
+        val foregroundServiceNotification: Notification = NotificationCompat.Builder(
+            applicationContext,
+            notificationChannelIdForHelperService
+        )
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .setContentTitle("Service is up and running 😉")
+            .setContentText("Status: $notificationMessage")
+            .setContentIntent(mainActivityPendingIntent)
+            .setGroup("helperServiceGroup")
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .setBigContentTitle("Status: $notificationMessage")
+                    .bigText(getString(R.string.notification_info_text))
+            ).build()
+        NotificationManagerCompat.from(applicationContext)
+            .notify(foregroundServiceId, foregroundServiceNotification)
     }
 
     override fun onDestroy() {

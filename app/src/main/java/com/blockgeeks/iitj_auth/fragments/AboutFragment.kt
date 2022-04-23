@@ -36,11 +36,11 @@ class AboutFragment : Fragment() {
     }
 
     private fun openInstaId() {
-        val uri = Uri.parse("instagram://user?username=pratyaksh.tyagi\n")
-        val facebookIntent = Intent(Intent.ACTION_VIEW, uri)
-        facebookIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+        val uri = Uri.parse("https://www.instagram.com/pratyaksh.tyagi/")
+        val instaIntent = Intent(Intent.ACTION_VIEW, uri)
+        instaIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
         try {
-            startActivity(facebookIntent)
+            startActivity(instaIntent)
         } catch (e: ActivityNotFoundException) {
             startActivity(
                 Intent(
