@@ -31,11 +31,18 @@ class MyForegroundService : Service() {
     private lateinit var connectivityManager: ConnectivityManager
     private var username: String? = null
     private var password: String? = null
-    var foregroundServiceId: Int = 1001
-    var notificationChannelIdForHelperService = "1000"
+    private var foregroundServiceId: Int = 1001
+    private var notificationChannelIdForHelperService = "1000"
 
     private var networkCallback: NetworkCallback = object : NetworkCallback() {
         override fun onAvailable(network: Network) {
+            // Fetch username and password from SP
+            val sharedPreferences =
+                applicationContext.getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
+
+            username = sharedPreferences.getString("username1", null)
+            password = sharedPreferences.getString("password1", null)
+
             // Captive portal Detected
             // First check if username and password are non null
             if (username == null || password == null) {
@@ -50,14 +57,27 @@ class MyForegroundService : Service() {
                 Log.i(TAG, "Captive Portal detected")
                 Toast.makeText(applicationContext, "Logging in..", Toast.LENGTH_LONG).show()
                 val response = authenticate(applicationContext, username!!, password!!)
-                if (response?.code == 200) {
+                if (response == "Success") {
                     // Dismiss the captive portal using the Captive portal API
                     Log.i(TAG, "Connected!")
                     updateNotification("Login Successful! ✅")
                     Toast.makeText(applicationContext, "Connected!", Toast.LENGTH_LONG).show()
-                } else if (response?.code == 204) {
+                } else if (response == "Already Connected") {
                     // Already Authenticated
                     Log.i(TAG, "Already Connected!")
+                } else if (response == "Failed") {
+                    Log.i(TAG, "Authentication Failed!")
+                    updateNotification(
+                        "Login Failed! ❌",
+                        "Please check if your username and password are correct."
+                    )
+                    Toast.makeText(applicationContext, "Authentication failed!", Toast.LENGTH_LONG)
+                        .show()
+                } else if (response == "Unknown") {
+                    Log.i(TAG, "Authentication Failed!")
+                    updateNotification("Authentication Failed! ❌")
+                } else {
+                    Log.i(TAG, "null Response")
                 }
 
                 // Use WorkManager to schedule work
@@ -78,17 +98,11 @@ class MyForegroundService : Service() {
         }
     }
 
-
     override fun onCreate() {
-        val sharedPreferences =
-            applicationContext.getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
-        username = sharedPreferences.getString("username1", null)
-        password = sharedPreferences.getString("password1", null)
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
             }
-
         createNotificationChannel()
         val foregroundServiceNotification: Notification = NotificationCompat.Builder(
             applicationContext,
@@ -147,7 +161,10 @@ class MyForegroundService : Service() {
         }
     }
 
-    fun updateNotification(message: String?) {
+    fun updateNotification(
+        message: String?,
+        description: String = getString(R.string.notification_info_text)
+    ) {
         var notificationMessage = message
         val mainActivityIntent = Intent(applicationContext, MainActivity::class.java)
         val mainActivityPendingIntent = PendingIntent.getActivity(
@@ -171,7 +188,7 @@ class MyForegroundService : Service() {
             .setStyle(
                 NotificationCompat.BigTextStyle()
                     .setBigContentTitle("Status: $notificationMessage")
-                    .bigText(getString(R.string.notification_info_text))
+                    .bigText(description)
             ).build()
         NotificationManagerCompat.from(applicationContext)
             .notify(foregroundServiceId, foregroundServiceNotification)

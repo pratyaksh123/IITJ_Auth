@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation 'org.jsoup:jsoup:1.14.3'
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0-beta01")
     implementation 'com.github.angads25:toggle:1.1.0'
     implementation 'io.sentry:sentry-android:5.7.3'

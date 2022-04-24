@@ -7,11 +7,12 @@ import android.util.Log
 import io.sentry.Sentry
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import org.jsoup.parser.Parser.htmlParser
 import java.net.UnknownHostException
 
 const val TAG = "Auth.kt"
 
-fun authenticate(applicationContext: Context, username:String, password: String): Response? {
+fun authenticate(applicationContext: Context, username: String, password: String): String? {
     val ai: ApplicationInfo = applicationContext.packageManager
         .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
 
@@ -40,12 +41,12 @@ fun authenticate(applicationContext: Context, username:String, password: String)
         Log.i(TAG, "Gstatic response: ${response}")
         val redirectUrl = response.networkResponse?.request?.url
         if (response.code == 204) {
-            return response
+            return "Already Connected"
         } else if (response.code == 200) {
             return auth(redirectUrl.toString(), password, username)
         }
     } catch (e: Exception) {
-        // UnknownHostException will occur if on cellular data instead of IITJ Wifi.
+        // UnknownHostException will occur if on cellular data instead of IITJ network. Probably not an issue since this will happen only on the worker's thread that too after a long time interval.
         if (e != UnknownHostException::class.java) {
             Sentry.captureException(e)
         }
@@ -54,7 +55,7 @@ fun authenticate(applicationContext: Context, username:String, password: String)
     return null
 }
 
-private fun auth(redirectUrl: String, password: String, username: String): Response {
+private fun auth(redirectUrl: String, password: String, username: String): String? {
     val magic = redirectUrl.split("?")[1]
     val client = OkHttpClient().newBuilder()
         .build()
@@ -64,6 +65,7 @@ private fun auth(redirectUrl: String, password: String, username: String): Respo
         mediaType,
         "4Tredir=http%3A%2F%2Fwww.gstatic.com%2Fgenerate_204&magic=${magic}&username=${username}&password=${password}"
     )
+    val res: String?
     val request: Request = Request.Builder()
         .url(redirectUrl)
         .method("POST", body)
@@ -97,12 +99,30 @@ private fun auth(redirectUrl: String, password: String, username: String): Respo
         .addHeader("Accept-Language", "en-US,en;q=0.9")
         .build()
     val response = client.newCall(request).execute()
-    if (response.code == 200) {
-        Log.i(TAG, "Successfully logged in!")
-    }
     Log.i(TAG, "$response")
+
+    if (response.code == 200) {
+        val responseBody = response.body?.string();
+        val doc = htmlParser().parseInput(responseBody, redirectUrl)
+        val authFailedMessage = doc.selectFirst("h2:containsOwn(Authentication)")?.text()
+        val authSuccessMessage = doc.selectFirst("h1:containsOwn(Keepalive)")?.text()
+        if (authSuccessMessage == null && authFailedMessage == "Firewall authentication failed. Please try again.") {
+            Log.i(TAG, "Auth Failed")
+            res = "Failed"
+
+        } else if (authFailedMessage == null && authSuccessMessage == "Authentication Keepalive") {
+            Log.i(TAG, "Auth Success")
+            res = "Success"
+        } else {
+            Sentry.captureMessage("authFailedMessage: $authFailedMessage authSuccessMessage: $authSuccessMessage responseBody:$responseBody")
+            res = "Unknown"
+        }
+    } else {
+        Sentry.captureMessage("Response - $response")
+        res = null
+    }
     response.body?.close()
-    return response
+    return res
 }
 
 
