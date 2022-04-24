@@ -180,6 +180,7 @@ class MyForegroundService : Service() {
     override fun onDestroy() {
         try {
             connectivityManager.unregisterNetworkCallback(networkCallback)
+            WorkManager.getInstance(applicationContext).cancelUniqueWork("periodicLoginWorkName")
         } catch (e: Exception) {
             Sentry.captureException(e)
             e.printStackTrace()

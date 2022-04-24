@@ -17,6 +17,6 @@
     <color name="accent">#536dfe</color>
     <color name="bottomNavigationColor">#536dfe</color>
     <color name="hyperLinkText">#303F9F</color>
+    <color name="background">#121212</color>
 
-    <!--    <bool name="isNotNight">true</bool>-->
 </resources>

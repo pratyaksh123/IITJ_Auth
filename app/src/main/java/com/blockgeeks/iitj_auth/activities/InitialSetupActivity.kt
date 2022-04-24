@@ -26,8 +26,8 @@ class InitialSetupActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        theme.applyStyle(R.style.Theme_IITJ_Auth, true)
         setContentView(R.layout.initial_setup_screen)
-
         val sharedPreferences = getSharedPreferences("initial_setup", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
