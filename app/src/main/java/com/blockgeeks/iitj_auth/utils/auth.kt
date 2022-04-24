@@ -106,11 +106,14 @@ private fun auth(redirectUrl: String, password: String, username: String): Strin
         val doc = htmlParser().parseInput(responseBody, redirectUrl)
         val authFailedMessage = doc.selectFirst("h2:containsOwn(Authentication)")?.text()
         val authSuccessMessage = doc.selectFirst("h1:containsOwn(Keepalive)")?.text()
-        if (authSuccessMessage == null && authFailedMessage == "Firewall authentication failed. Please try again.") {
+        if (authSuccessMessage == null && authFailedMessage?.lowercase()
+                ?.contains("failed") == true
+        ) {
             Log.i(TAG, "Auth Failed")
             res = "Failed"
-
-        } else if (authFailedMessage == null && authSuccessMessage == "Authentication Keepalive") {
+        } else if (authFailedMessage == null && authSuccessMessage?.lowercase()
+                ?.contains("Keepalive".lowercase()) == true
+        ) {
             Log.i(TAG, "Auth Success")
             res = "Success"
         } else {
