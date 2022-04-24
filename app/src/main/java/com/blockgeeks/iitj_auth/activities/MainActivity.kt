@@ -45,12 +45,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.menu.getItem(1).isChecked = true
+        title = getString(R.string.dashboard)
         setCurrentFragment(dashboardFragment)
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_about -> setCurrentFragment(aboutFragment)
-                R.id.navigation_dashboard -> setCurrentFragment(dashboardFragment)
-                R.id.navigation_settings -> setCurrentFragment(settingsFragment)
+                R.id.navigation_about -> {
+                    title = getString(R.string.about)
+                    setCurrentFragment(aboutFragment)
+                }
+                R.id.navigation_dashboard -> {
+                    title = getString(R.string.dashboard)
+                    setCurrentFragment(dashboardFragment)
+                }
+                R.id.navigation_settings -> {
+                    title = getString(R.string.settings)
+                    setCurrentFragment(settingsFragment)
+                }
             }
             true
         }
