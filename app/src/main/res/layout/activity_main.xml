@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bgColor"
     tools:context=".activities.MainActivity">
 
     <FrameLayout
@@ -21,7 +20,6 @@
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:background="?android:attr/windowBackground"
-        app:itemBackground="@color/bgColor"
         app:itemIconTint="@color/navigation_item"
         app:itemTextColor="@color/navigation_item"
         app:menu="@menu/navigation" />

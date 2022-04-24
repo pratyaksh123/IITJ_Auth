@@ -3,8 +3,11 @@ package com.blockgeeks.iitj_auth.services
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.net.*
+import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -59,7 +62,7 @@ class MyForegroundService : Service() {
 
                 // Use WorkManager to schedule work
                 val periodicLoginWork = PeriodicWorkRequest.Builder(
-                    LoginInitiatorWorker::class.java, 15, TimeUnit.MINUTES, 5, TimeUnit.MINUTES
+                    LoginInitiatorWorker::class.java, 84, TimeUnit.MINUTES, 5, TimeUnit.MINUTES
                 ).build()
                 WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
                     "periodicLoginWorkName",
