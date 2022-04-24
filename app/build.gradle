@@ -15,8 +15,8 @@ android {
         applicationId "com.blockgeeks.iitj_auth"
         minSdk 23
         targetSdk 31
-        versionCode 5
-        versionName "1.1.0"
+        versionCode 6
+        versionName "1.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation "androidx.security:security-crypto:1.1.0-alpha03"
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0-beta01")
     implementation 'com.github.angads25:toggle:1.1.0'

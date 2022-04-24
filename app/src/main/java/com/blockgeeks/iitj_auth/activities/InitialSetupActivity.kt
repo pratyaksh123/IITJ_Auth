@@ -7,28 +7,39 @@ import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.security.crypto.EncryptedSharedPreferences
 import com.blockgeeks.iitj_auth.R
+import com.blockgeeks.iitj_auth.utils.getMasterKey
 import com.google.android.material.textfield.TextInputLayout
 import java.util.regex.Pattern
 
-class InitialSetupActivity: Activity() {
+class InitialSetupActivity : Activity() {
     private lateinit var initialSetupPageHeadingTextView: TextView
     private lateinit var initialSetupNameEditText: EditText
-    private var initialSetupUserName1EditText:EditText? = null
-    private var initialSetupPassword1EditText:EditText? = null
+    private var initialSetupUserName1EditText: EditText? = null
+    private var initialSetupPassword1EditText: EditText? = null
     private var initialSetupTextInputLayoutName: TextInputLayout? = null
-    private var initialSetupTextInputLayoutUserName1:TextInputLayout? = null
-    private var initialSetupTextInputLayoutPassword1:TextInputLayout? = null
+    private var initialSetupTextInputLayoutUserName1: TextInputLayout? = null
+    private var initialSetupTextInputLayoutPassword1: TextInputLayout? = null
     private var initialSetupDoneButton: Button? = null
     private var userName1: String? = null
-    private var password1:String? = null
-    private var name:String? = null
+    private var password1: String? = null
+    private var name: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         theme.applyStyle(R.style.Theme_IITJ_Auth, true)
         setContentView(R.layout.initial_setup_screen)
-        val sharedPreferences = getSharedPreferences("initial_setup", MODE_PRIVATE)
+
+        val masterKey = getMasterKey(applicationContext)
+
+        val sharedPreferences = EncryptedSharedPreferences.create(
+            applicationContext,
+            "initial_setup",
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+        )
         val editor = sharedPreferences.edit()
 
         findIds()

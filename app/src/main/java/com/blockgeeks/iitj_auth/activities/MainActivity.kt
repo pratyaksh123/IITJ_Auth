@@ -1,15 +1,16 @@
 package com.blockgeeks.iitj_auth.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
+import androidx.security.crypto.EncryptedSharedPreferences
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.fragments.AboutFragment
 import com.blockgeeks.iitj_auth.fragments.DashboardFragment
 import com.blockgeeks.iitj_auth.fragments.SettingsFragment
+import com.blockgeeks.iitj_auth.utils.getMasterKey
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 const val TAG = "MainActivity"
@@ -23,10 +24,19 @@ class MainActivity : AppCompatActivity() {
         val dashboardFragment = DashboardFragment()
         val settingsFragment = SettingsFragment()
 
-        val sharedPreferences = applicationContext.getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
+        val masterKey = getMasterKey(applicationContext)
+
+        val sharedPreferences = EncryptedSharedPreferences.create(
+            applicationContext,
+            "initial_setup",
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+        )
+
         val initialSetupBoolean = sharedPreferences.getBoolean("initial_setup", false)
 
-        if(!initialSetupBoolean) {
+        if (!initialSetupBoolean) {
             intent = Intent(applicationContext, InitialSetupActivity::class.java)
             startActivity(intent)
             finish()
@@ -51,6 +61,5 @@ class MainActivity : AppCompatActivity() {
             replace(R.id.container, fragment).commit()
         }
     }
-
 }
 

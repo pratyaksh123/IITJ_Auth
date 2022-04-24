@@ -7,11 +7,13 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.activities.MainActivity
 import com.blockgeeks.iitj_auth.utils.authenticate
+import com.blockgeeks.iitj_auth.utils.getMasterKey
 import io.sentry.Sentry
 
 const val TAG = "LoginInitiatorWorker"
@@ -21,8 +23,14 @@ class LoginInitiatorWorker(context: Context, workerParams: WorkerParameters) :
     var foregroundServiceId: Int = 1001
     var notificationChannelIdForHelperService = "1000"
     override suspend fun doWork(): Result {
-        val sharedPreferences =
-            applicationContext.getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
+        val sharedPreferences = EncryptedSharedPreferences.create(
+            applicationContext,
+            "initial_setup",
+            getMasterKey(applicationContext),
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+        )
+
         val username = sharedPreferences.getString("username1", null)
         val password = sharedPreferences.getString("password1", null)
         // username and password null check

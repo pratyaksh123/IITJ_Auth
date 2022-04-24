@@ -2,7 +2,9 @@ package com.blockgeeks.iitj_auth.fragments
 
 import android.annotation.SuppressLint
 import android.app.SearchManager
-import android.content.*
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,8 +19,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.security.crypto.EncryptedSharedPreferences
 import com.blockgeeks.iitj_auth.BuildConfig
 import com.blockgeeks.iitj_auth.R
+import com.blockgeeks.iitj_auth.utils.getMasterKey
 import com.google.android.material.textfield.TextInputLayout
 import java.util.*
 import java.util.regex.Pattern
@@ -45,8 +49,13 @@ class SettingsFragment : Fragment() {
         val view: View = layoutInflater.inflate(R.layout.fragement_settings, container, false)
         findIds(view)
 
-        sharedPreferences =
-            requireContext().getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
+        sharedPreferences = EncryptedSharedPreferences.create(
+            requireContext(),
+            "initial_setup",
+            getMasterKey(requireContext()),
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+        )
 
         findIds(view)
         setValues()

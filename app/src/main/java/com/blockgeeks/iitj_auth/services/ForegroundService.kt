@@ -14,12 +14,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.activities.MainActivity
 import com.blockgeeks.iitj_auth.utils.authenticate
+import com.blockgeeks.iitj_auth.utils.getMasterKey
 import com.blockgeeks.iitj_auth.workers.LoginInitiatorWorker
 import io.sentry.Sentry
 import java.util.concurrent.TimeUnit
@@ -37,8 +39,13 @@ class MyForegroundService : Service() {
     private var networkCallback: NetworkCallback = object : NetworkCallback() {
         override fun onAvailable(network: Network) {
             // Fetch username and password from SP
-            val sharedPreferences =
-                applicationContext.getSharedPreferences("initial_setup", Context.MODE_PRIVATE)
+            val sharedPreferences = EncryptedSharedPreferences.create(
+                applicationContext,
+                "initial_setup",
+                getMasterKey(applicationContext),
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+            )
 
             username = sharedPreferences.getString("username1", null)
             password = sharedPreferences.getString("password1", null)
