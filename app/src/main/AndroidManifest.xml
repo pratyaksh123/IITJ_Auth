@@ -42,7 +42,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.InitialSetupActivity" android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"/>
+        <activity
+            android:name=".activities.InitialSetupActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge" />
+
         <receiver
             android:name=".receivers.BootActionReceiver"
             android:exported="false">
@@ -52,7 +55,16 @@
         </receiver>
 
         <service android:name=".services.MyForegroundService" />
-
+        <service
+            android:name=".services.TileService"
+            android:label="IITJ Auth"
+            android:icon="@drawable/ic_instagram"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
 
     </application>
 
