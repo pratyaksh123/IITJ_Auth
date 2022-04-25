@@ -83,7 +83,7 @@ class SettingsFragment : Fragment() {
 
     private fun openPrivacyPolicyWebPage() {
         val uri =
-            Uri.parse("https://www.freeprivacypolicy.com/privacy/view/7e565d8445e144f227709d97a645fee6")
+            Uri.parse("https://pages.flycricket.io/iitj-auth-0/privacy.html")
         val privacyPolicyIntent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(privacyPolicyIntent)
     }

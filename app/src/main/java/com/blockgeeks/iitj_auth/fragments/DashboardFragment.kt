@@ -23,8 +23,6 @@ class DashboardFragment : Fragment() {
     private lateinit var foregroundServiceIntent: Intent
     private lateinit var statusInfoInactiveTextView: TextView
     private lateinit var statusInfoActiveTextView: TextView
-    private lateinit var gotoBatterySettingsTextView: TextView
-
 
     override fun onAttach(context: Context) {
         Log.e(TAG, "onAttach: " + "called")
@@ -42,12 +40,6 @@ class DashboardFragment : Fragment() {
         serviceIconSwitch = view.findViewById(R.id.serviceIconSwitch)
         statusInfoActiveTextView = view.findViewById(R.id.statusInfoActiveTextView)
         statusInfoInactiveTextView = view.findViewById(R.id.statusInfoInactiveTextView)
-        gotoBatterySettingsTextView = view.findViewById(R.id.gotoBatterySettingsTextView)
-
-        //Adding intent to Battery Settings
-        gotoBatterySettingsTextView.setOnClickListener {
-
-        }
 
         if (isServiceRunningInForeground(requireContext(), MyForegroundService::class.java)) {
             serviceIconSwitch.isOn = true

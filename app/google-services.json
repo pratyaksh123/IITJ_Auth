@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "820925891609",
+    "project_id": "iitj-auth",
+    "storage_bucket": "iitj-auth.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820925891609:android:97b583d0dd65c487b11688",
+        "android_client_info": {
+          "package_name": "com.blockgeeks.iitj_auth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820925891609-gp030en240hkt177divhv5fuim9lb4l5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpOvzQi8F9Tm6WyQT6vFrZIotgGlttN-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820925891609-gp030en240hkt177divhv5fuim9lb4l5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

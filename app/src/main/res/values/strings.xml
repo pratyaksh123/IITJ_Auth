@@ -22,7 +22,7 @@
     <string name="status">Status:</string>
     <string name="inactive">Inactive</string>
     <string name="toggle_the_service_using_the_switch_above">Toggle the service using the switch above.</string>
-    <string name="caution_message"><b>Please note</b>\n• Keep the Mobile Data off while using this app!\n• Turn off Battery Optimization for this App!</string>
+    <string name="caution_message"><b>Quick Tips</b>\n• Feel free to close the app, the service will keep running.\n• For quick access add the app\'s tile to your quick settings!</string>
     <string name="click_to_open_battery_optimization_settings">CLICK TO OPEN POWER SETTINGS</string>
     <string name="service_killed_help_desc">Some of the devices might not allow the service to run all the time due to background computation restrictions by manufacturers, for instance you may white list the app from <b>Settings > Battery > Battery Optimization > \'Don\'t Optimize this app\'</b> \n\n OR\n</string>
     <string name="invalid_name">Invalid Name</string>

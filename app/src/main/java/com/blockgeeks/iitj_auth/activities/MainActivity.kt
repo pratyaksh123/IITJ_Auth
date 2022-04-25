@@ -12,18 +12,22 @@ import com.blockgeeks.iitj_auth.fragments.DashboardFragment
 import com.blockgeeks.iitj_auth.fragments.SettingsFragment
 import com.blockgeeks.iitj_auth.utils.getMasterKey
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.analytics.FirebaseAnalytics
 
 const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var analytics: FirebaseAnalytics
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         val aboutFragment = AboutFragment()
         val dashboardFragment = DashboardFragment()
         val settingsFragment = SettingsFragment()
-
+        // Obtain the FirebaseAnalytics instance.
+        // TODO: Enable in production
+//        analytics = Firebase.analytics
         val masterKey = getMasterKey(applicationContext)
 
         val sharedPreferences = EncryptedSharedPreferences.create(
