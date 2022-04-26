@@ -16,15 +16,15 @@ android {
         applicationId "com.blockgeeks.iitj_auth"
         minSdk 23
         targetSdk 31
-        versionCode 7
-        versionName "1.3.0"
+        versionCode 8
+        versionName "1.4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

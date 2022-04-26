@@ -119,6 +119,12 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setup_page_info"
+                android:alpha="0.6"
+                android:textSize="13sp" />
         </LinearLayout>
 
     </ScrollView>

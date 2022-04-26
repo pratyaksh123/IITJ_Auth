@@ -18,7 +18,7 @@
 
         <meta-data
             android:name="io.sentry.dsn"
-            android:value="https://5b3b116297d64e709bd5628712b404be@o1211564.ingest.sentry.io/6349120" />
+            android:value="https://baf7301710d94c78ba7f542d68e597bc@o1220534.ingest.sentry.io/6363495" />
         <!-- Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
            We recommend adjusting this value in production. -->
         <meta-data
@@ -26,12 +26,8 @@
             android:value="1.0" />
 
         <meta-data
-            android:name="password"
-            android:value="${password}" />
-
-        <meta-data
-            android:name="username"
-            android:value="${username}" />
+            android:name="io.sentry.environment"
+            android:value="production" />
 
         <activity
             android:name=".activities.MainActivity"
@@ -57,10 +53,10 @@
         <service android:name=".services.MyForegroundService" />
         <service
             android:name=".services.TileService"
-            android:label="IITJ Auth"
+            android:exported="true"
             android:icon="@drawable/ic_splash_screen_icon"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
-            android:exported="true">
+            android:label="IITJ Auth"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>

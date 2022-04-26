@@ -13,6 +13,8 @@ import com.blockgeeks.iitj_auth.fragments.SettingsFragment
 import com.blockgeeks.iitj_auth.utils.getMasterKey
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 
 const val TAG = "MainActivity"
 
@@ -27,9 +29,8 @@ class MainActivity : AppCompatActivity() {
         val settingsFragment = SettingsFragment()
         // Obtain the FirebaseAnalytics instance.
         // TODO: Enable in production
-//        analytics = Firebase.analytics
+        analytics = Firebase.analytics
         val masterKey = getMasterKey(applicationContext)
-
         val sharedPreferences = EncryptedSharedPreferences.create(
             applicationContext,
             "initial_setup",
