@@ -51,5 +51,10 @@
     <string name="github_repository_link">GitHub Repository Link</string>
     <string name="source_code">Source code</string>
     <string name="setup_page_info">This data is securely stored encrypted on device.</string>
+    <string name="feature2">2.<b> Extremely battery efficient: </b> Authentication only works actively when a wifi with captive portal (sign in page) is detected , also it cancels background work when not on IITJ network. </string>
+    <string name="feature1">1. <b>Don\'t worry about mobile data:  </b> Can authenticate even with both cellular and wifi on.</string>
+    <string name="feature3">3. <b>No need to even open the app: </b> Control the login service using QuickSettings Tile.</string>
+    <string name="featuresHeading">Features:</string>
+    <string name="features_title">Features</string>
 
 </resources>
