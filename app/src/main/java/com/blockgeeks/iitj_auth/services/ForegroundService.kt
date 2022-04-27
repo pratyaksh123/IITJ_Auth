@@ -69,6 +69,25 @@ class MyForegroundService : Service() {
                     Log.i(TAG, "Connected!")
                     updateNotification("Login Successful! ✅")
                     Toast.makeText(applicationContext, "Connected!", Toast.LENGTH_LONG).show()
+
+                    // First cancel all work
+                    WorkManager.getInstance(applicationContext)
+                        .cancelUniqueWork("periodicLoginWorkName")
+
+                    // Use WorkManager to schedule work
+                    val periodicLoginWork = PeriodicWorkRequest.Builder(
+                        LoginInitiatorWorker::class.java,
+                        5000,
+                        TimeUnit.SECONDS,
+                        5,
+                        TimeUnit.MINUTES
+                    ).build()
+                    WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+                        "periodicLoginWorkName",
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        periodicLoginWork
+                    )
+
                 } else if (response == "Already Connected") {
                     // Already Authenticated
                     Log.i(TAG, "Already Connected!")
@@ -83,19 +102,8 @@ class MyForegroundService : Service() {
                 } else if (response == "Unknown") {
                     Log.i(TAG, "Authentication Failed!")
                     updateNotification("Authentication Failed! ❌")
-                } else {
-                    Log.i(TAG, "null Response")
                 }
 
-                // Use WorkManager to schedule work
-                val periodicLoginWork = PeriodicWorkRequest.Builder(
-                    LoginInitiatorWorker::class.java, 120, TimeUnit.MINUTES, 5, TimeUnit.MINUTES
-                ).build()
-                WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-                    "periodicLoginWorkName",
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    periodicLoginWork
-                )
             }
 
         }
@@ -132,7 +140,6 @@ class MyForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         val builder =
             NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL)
@@ -205,6 +212,8 @@ class MyForegroundService : Service() {
         try {
             connectivityManager.unregisterNetworkCallback(networkCallback)
             WorkManager.getInstance(applicationContext).cancelUniqueWork("periodicLoginWorkName")
+            // reset the session_url to null
+
         } catch (e: Exception) {
             Sentry.captureException(e)
             e.printStackTrace()
