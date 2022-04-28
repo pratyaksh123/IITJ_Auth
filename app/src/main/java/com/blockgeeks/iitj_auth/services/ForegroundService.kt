@@ -77,14 +77,14 @@ class MyForegroundService : Service() {
                     // Use WorkManager to schedule work
                     val periodicLoginWork = PeriodicWorkRequest.Builder(
                         LoginInitiatorWorker::class.java,
-                        5000,
-                        TimeUnit.SECONDS,
+                        60,
+                        TimeUnit.MINUTES,
                         5,
                         TimeUnit.MINUTES
                     ).build()
                     WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
                         "periodicLoginWorkName",
-                        ExistingPeriodicWorkPolicy.KEEP,
+                        ExistingPeriodicWorkPolicy.REPLACE,
                         periodicLoginWork
                     )
 

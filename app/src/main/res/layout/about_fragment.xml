@@ -51,11 +51,31 @@
         android:textAlignment="center" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/bugsView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/devByTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/bugsReportingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report_bugs_here" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bugsView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:orientation="vertical">
 
         <TextView

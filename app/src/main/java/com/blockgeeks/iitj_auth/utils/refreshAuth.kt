@@ -45,6 +45,7 @@ fun refreshAuth(url: String): String? {
             return "Success"
         } else {
             // Cancel Work
+            Log.i(TAG_, "$response")
             return "Failed"
         }
     } catch (e: Exception) {

@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.work.CoroutineWorker
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.activities.MainActivity
@@ -38,19 +39,21 @@ class LoginInitiatorWorker(context: Context, workerParams: WorkerParameters) :
             if (response == "Success") {
                 // usual stuff
                 Log.i(TAG, "Refresh Successful!")
-                updateNotification("Auth Refresh successful!")
+//                updateNotification("Authentication Success!", "Enjoy interruption free internet")
                 return Result.success()
             } else {
                 // stop the worker if connection state changes which will give response != 200 in refreshAuth.kt
-                onStopped()
+                WorkManager.getInstance(applicationContext)
+                    .cancelUniqueWork("periodicLoginWorkName")
                 Log.i(TAG, "WorkerStopped")
-                updateNotification("Worker stopped!")
+//                updateNotification("Standby mode","Session url expired or not on IITJ network.")
                 return Result.success()
             }
         } else {
             // Probably an unreachable state
             Log.i(TAG, "session url null")
-            onStopped()
+            WorkManager.getInstance(applicationContext)
+                .cancelUniqueWork("periodicLoginWorkName")
             Sentry.captureMessage("session url null")
             return Result.failure()
         }

@@ -15,7 +15,7 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_splash_screen_icon.xml" value="0.145" />
         <entry key="app/src/main/res/drawable/notification_icon.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/about_fragment.xml" value="0.15833333333333333" />
+        <entry key="app/src/main/res/layout/about_fragment.xml" value="0.19572368421052633" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/alert_dialog_edit_name.xml" value="0.13697916666666668" />
         <entry key="app/src/main/res/layout/alert_dialog_edit_profile.xml" value="0.13697916666666668" />

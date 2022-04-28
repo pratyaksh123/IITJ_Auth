@@ -56,5 +56,6 @@
     <string name="feature3">3. <b>No need to even open the app: </b> Control the login service using QuickSettings Tile.</string>
     <string name="featuresHeading">Features:</string>
     <string name="features_title">Features</string>
+    <string name="report_bugs_here">Report bugs here</string>
 
 </resources>

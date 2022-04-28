@@ -7,25 +7,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.blockgeeks.iitj_auth.R
 
 class AboutFragment : Fragment() {
-    private var linkedInLinkImageView: ImageView? = null
-    private var instaLinkImageView: ImageView? = null
-    private var githubLinkImageView: ImageView? = null
+    private lateinit var linkedInLinkImageView: ImageView
+    private lateinit var instaLinkImageView: ImageView
+    private lateinit var githubLinkImageView: ImageView
+    private lateinit var bugsReportingButton: Button
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view: View = inflater.inflate(R.layout.about_fragment, container, false)
         findAllIds(view)
-        linkedInLinkImageView!!.setOnClickListener { openLinkedInId() }
-        instaLinkImageView!!.setOnClickListener { openInstaId() }
-        githubLinkImageView!!.setOnClickListener { openGithubId() }
+        linkedInLinkImageView.setOnClickListener { openLinkedInId() }
+        instaLinkImageView.setOnClickListener { openInstaId() }
+        githubLinkImageView.setOnClickListener { openGithubId() }
+        bugsReportingButton.setOnClickListener { openGithubIssues() }
         return view
+    }
+
+    private fun openGithubIssues() {
+        val uri = Uri.parse("https://github.com/pratyaksh123/IITJ_Auth/issues")
+        val githubIntent = Intent(Intent.ACTION_VIEW, uri)
+        githubIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+        startActivity(githubIntent)
     }
 
     private fun openGithubId() {
@@ -71,5 +81,6 @@ class AboutFragment : Fragment() {
         linkedInLinkImageView = view.findViewById(R.id.linkedInLinkImageView)
         instaLinkImageView = view.findViewById(R.id.instaLinkImageView)
         githubLinkImageView = view.findViewById(R.id.githubLinkImageView)
+        bugsReportingButton = view.findViewById(R.id.bugsReportingButton)
     }
 }
