@@ -9,6 +9,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
@@ -23,6 +24,7 @@ import com.blockgeeks.iitj_auth.activities.MainActivity
 import com.blockgeeks.iitj_auth.utils.authenticate
 import com.blockgeeks.iitj_auth.utils.getMasterKey
 import com.blockgeeks.iitj_auth.workers.LoginInitiatorWorker
+import com.google.firebase.analytics.FirebaseAnalytics
 import io.sentry.Sentry
 import java.util.concurrent.TimeUnit
 
@@ -102,6 +104,20 @@ class MyForegroundService : Service() {
                 } else if (response == "Unknown") {
                     Log.i(TAG, "Authentication Failed!")
                     updateNotification("Authentication Failed! ❌")
+                } else {
+                    // res = null states
+                    val parameters = Bundle().apply {
+                        this.putString("level_name", "message")
+                        this.putInt("level_difficulty", 4)
+                    }
+                    FirebaseAnalytics.getInstance(applicationContext)
+                        .logEvent("Auth_failed", parameters)
+
+                    Log.i(TAG, "Authentication Failed! , response null")
+                    updateNotification(
+                        "Authentication Failed! ❌",
+                        "Try toggling the Wifi on/off once."
+                    )
                 }
 
             }

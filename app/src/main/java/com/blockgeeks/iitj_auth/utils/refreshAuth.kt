@@ -6,7 +6,7 @@ import okhttp3.Request
 import okhttp3.Response
 
 const val TAG_ = "RefreshAuth"
-fun refreshAuth(url: String): String? {
+fun refreshAuth(url: String): String {
     try {
         val client = OkHttpClient().newBuilder()
             .build()

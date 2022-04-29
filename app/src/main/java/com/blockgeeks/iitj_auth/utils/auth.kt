@@ -7,6 +7,7 @@ import io.sentry.Sentry
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.jsoup.parser.Parser.htmlParser
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 const val TAG = "Auth.kt"
@@ -42,15 +43,16 @@ fun authenticate(applicationContext: Context, username: String, password: String
             return auth(redirectUrl.toString(), password, username, applicationContext)
         } else {
             Sentry.captureMessage("Gstatic response error $response")
+            return null
         }
     } catch (e: Exception) {
-        // UnknownHostException will occur if on cellular data instead of IITJ network. Probably not an issue since this will happen only on the worker's thread that too after a long time interval.
-        if (e != UnknownHostException::class.java) {
+        // UnknownHostException or SocketTimeoutError will occur if on cellular data instead of IITJ network. Probably not an issue since this will happen only on the worker's thread that too after a long time interval.
+        if (e != UnknownHostException::class.java || e != SocketTimeoutException::class.java) {
             Sentry.captureException(e)
         }
         e.printStackTrace()
+        return null
     }
-    return null
 }
 
 private fun auth(
