@@ -9,6 +9,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
@@ -23,6 +24,7 @@ import com.blockgeeks.iitj_auth.activities.MainActivity
 import com.blockgeeks.iitj_auth.utils.authenticate
 import com.blockgeeks.iitj_auth.utils.getMasterKey
 import com.blockgeeks.iitj_auth.workers.LoginInitiatorWorker
+import com.google.firebase.analytics.FirebaseAnalytics
 import io.sentry.Sentry
 import java.util.concurrent.TimeUnit
 
@@ -69,6 +71,25 @@ class MyForegroundService : Service() {
                     Log.i(TAG, "Connected!")
                     updateNotification("Login Successful! ✅")
                     Toast.makeText(applicationContext, "Connected!", Toast.LENGTH_LONG).show()
+
+                    // First cancel all work
+                    WorkManager.getInstance(applicationContext)
+                        .cancelUniqueWork("periodicLoginWorkName")
+
+                    // Use WorkManager to schedule work
+                    val periodicLoginWork = PeriodicWorkRequest.Builder(
+                        LoginInitiatorWorker::class.java,
+                        60,
+                        TimeUnit.MINUTES,
+                        5,
+                        TimeUnit.MINUTES
+                    ).build()
+                    WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+                        "periodicLoginWorkName",
+                        ExistingPeriodicWorkPolicy.REPLACE,
+                        periodicLoginWork
+                    )
+
                 } else if (response == "Already Connected") {
                     // Already Authenticated
                     Log.i(TAG, "Already Connected!")
@@ -84,18 +105,21 @@ class MyForegroundService : Service() {
                     Log.i(TAG, "Authentication Failed!")
                     updateNotification("Authentication Failed! ❌")
                 } else {
-                    Log.i(TAG, "null Response")
+                    // res = null states
+                    val parameters = Bundle().apply {
+                        this.putString("level_name", "message")
+                        this.putInt("level_difficulty", 4)
+                    }
+                    FirebaseAnalytics.getInstance(applicationContext)
+                        .logEvent("Auth_failed", parameters)
+
+                    Log.i(TAG, "Authentication Failed! , response null")
+                    updateNotification(
+                        "Authentication Failed! ❌",
+                        "Try toggling the Wifi on/off once."
+                    )
                 }
 
-                // Use WorkManager to schedule work
-                val periodicLoginWork = PeriodicWorkRequest.Builder(
-                    LoginInitiatorWorker::class.java, 120, TimeUnit.MINUTES, 5, TimeUnit.MINUTES
-                ).build()
-                WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-                    "periodicLoginWorkName",
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    periodicLoginWork
-                )
             }
 
         }
@@ -132,7 +156,6 @@ class MyForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         val builder =
             NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL)
@@ -205,6 +228,8 @@ class MyForegroundService : Service() {
         try {
             connectivityManager.unregisterNetworkCallback(networkCallback)
             WorkManager.getInstance(applicationContext).cancelUniqueWork("periodicLoginWorkName")
+            // reset the session_url to null
+
         } catch (e: Exception) {
             Sentry.captureException(e)
             e.printStackTrace()

@@ -1,21 +1,18 @@
 package com.blockgeeks.iitj_auth.utils
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.util.Log
+import androidx.security.crypto.EncryptedSharedPreferences
 import io.sentry.Sentry
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.jsoup.parser.Parser.htmlParser
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 const val TAG = "Auth.kt"
 
 fun authenticate(applicationContext: Context, username: String, password: String): String? {
-    val ai: ApplicationInfo = applicationContext.packageManager
-        .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
-
     try {
         val client: OkHttpClient = OkHttpClient().newBuilder()
             .build()
@@ -43,24 +40,31 @@ fun authenticate(applicationContext: Context, username: String, password: String
         if (response.code == 204) {
             return "Already Connected"
         } else if (response.code == 200) {
-            return auth(redirectUrl.toString(), password, username)
+            return auth(redirectUrl.toString(), password, username, applicationContext)
+        } else {
+            Sentry.captureMessage("Gstatic response error $response")
+            return null
         }
     } catch (e: Exception) {
-        // UnknownHostException will occur if on cellular data instead of IITJ network. Probably not an issue since this will happen only on the worker's thread that too after a long time interval.
-        if (e != UnknownHostException::class.java) {
+        // UnknownHostException or SocketTimeoutError will occur if on cellular data instead of IITJ network. Probably not an issue since this will happen only on the worker's thread that too after a long time interval.
+        if (e != UnknownHostException::class.java || e != SocketTimeoutException::class.java) {
             Sentry.captureException(e)
         }
         e.printStackTrace()
+        return null
     }
-    return null
 }
 
-private fun auth(redirectUrl: String, password: String, username: String): String? {
+private fun auth(
+    redirectUrl: String,
+    password: String,
+    username: String,
+    applicationContext: Context
+): String? {
     val magic = redirectUrl.split("?")[1]
     val client = OkHttpClient().newBuilder()
         .build()
     val mediaType: MediaType? = "application/x-www-form-urlencoded".toMediaTypeOrNull()
-    // TODO: Encrypt username and password in this request
     val body: RequestBody = RequestBody.create(
         mediaType,
         "4Tredir=http%3A%2F%2Fwww.gstatic.com%2Fgenerate_204&magic=${magic}&username=${username}&password=${password}"
@@ -100,7 +104,6 @@ private fun auth(redirectUrl: String, password: String, username: String): Strin
         .build()
     val response = client.newCall(request).execute()
     Log.i(TAG, "$response")
-
     if (response.code == 200) {
         val responseBody = response.body?.string();
         val doc = htmlParser().parseInput(responseBody, redirectUrl)
@@ -116,12 +119,26 @@ private fun auth(redirectUrl: String, password: String, username: String): Strin
         ) {
             Log.i(TAG, "Auth Success")
             res = "Success"
+
+            // Save KeepAlive url in shared preferences
+            val sessionUrl = response.networkResponse?.request?.url
+            val sharedPreferences = EncryptedSharedPreferences.create(
+                applicationContext,
+                "initial_setup",
+                getMasterKey(applicationContext),
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+            )
+            val editor = sharedPreferences.edit()
+            editor.putString("session_url", sessionUrl.toString())
+            editor.apply()
         } else {
             Sentry.captureMessage("authFailedMessage: $authFailedMessage authSuccessMessage: $authSuccessMessage responseBody:$responseBody")
             res = "Unknown"
         }
     } else {
         Sentry.captureMessage("Response - $response")
+        Log.i(com.blockgeeks.iitj_auth.services.TAG, "null Response")
         res = null
     }
     response.body?.close()

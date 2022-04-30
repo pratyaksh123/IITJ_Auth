@@ -9,11 +9,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.work.CoroutineWorker
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.activities.MainActivity
-import com.blockgeeks.iitj_auth.utils.authenticate
 import com.blockgeeks.iitj_auth.utils.getMasterKey
+import com.blockgeeks.iitj_auth.utils.refreshAuth
 import io.sentry.Sentry
 
 const val TAG = "LoginInitiatorWorker"
@@ -31,41 +32,29 @@ class LoginInitiatorWorker(context: Context, workerParams: WorkerParameters) :
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
         )
 
-        val username = sharedPreferences.getString("username1", null)
-        val password = sharedPreferences.getString("password1", null)
-        // username and password null check
-        if (username == null || password == null) {
-            Log.e(TAG, "Username or Password not set!")
-            updateNotification("Login Failed: Username or Password not set!")
-            return Result.failure()
-        }
-
-        Log.i(TAG, "Authenticating..")
-        val response = authenticate(applicationContext, username, password)
-
-        if (response == "Success") {
-            // Dismiss the captive portal using the Captive portal API
-            Log.i(com.blockgeeks.iitj_auth.services.TAG, "Connected!")
-            updateNotification("Login Successful! ✅")
-            return Result.success()
-        } else if (response == "Already Connected") {
-            // Already Authenticated
-            Log.i(com.blockgeeks.iitj_auth.services.TAG, "Already Connected!")
-            return Result.success()
-        } else if (response == "Failed") {
-            Log.i(com.blockgeeks.iitj_auth.services.TAG, "Authentication Failed!")
-            updateNotification(
-                "Login Failed! ❌",
-                "Please check if your username and password are correct."
-            )
-            return Result.failure()
-        } else if (response == "Unknown") {
-            Log.i(TAG, "Authentication Failed!")
-            Sentry.captureMessage("Worker Failed!, Response - $response")
-            return Result.failure()
+        val sessionUrl = sharedPreferences.getString("session_url", null)
+        // session url null check
+        if (sessionUrl != null) {
+            val response = refreshAuth(sessionUrl)
+            if (response == "Success") {
+                // usual stuff
+                Log.i(TAG, "Refresh Successful!")
+//                updateNotification("Authentication Success!", "Enjoy interruption free internet")
+                return Result.success()
+            } else {
+                // stop the worker if connection state changes which will give response != 200 in refreshAuth.kt
+                WorkManager.getInstance(applicationContext)
+                    .cancelUniqueWork("periodicLoginWorkName")
+                Log.i(TAG, "WorkerStopped")
+//                updateNotification("Standby mode","Session url expired or not on IITJ network.")
+                return Result.success()
+            }
         } else {
-            Log.i(TAG, "null Response")
-            Sentry.captureMessage("Worker Failed!, Response - $response")
+            // Probably an unreachable state
+            Log.i(TAG, "session url null")
+            WorkManager.getInstance(applicationContext)
+                .cancelUniqueWork("periodicLoginWorkName")
+            Sentry.captureMessage("session url null")
             return Result.failure()
         }
     }

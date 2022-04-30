@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
         )
-
         val initialSetupBoolean = sharedPreferences.getBoolean("initial_setup", false)
 
         if (!initialSetupBoolean) {

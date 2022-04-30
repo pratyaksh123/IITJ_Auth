@@ -39,6 +39,7 @@ class SettingsFragment : Fragment() {
     private lateinit var settingsViewPrivacyPolicyLinearLayout: LinearLayout
     private lateinit var settingsGithubRepoLinkLinearLayout: LinearLayout
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var featuresLinearLayout: LinearLayout
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -72,7 +73,20 @@ class SettingsFragment : Fragment() {
 
         settingsGithubRepoLinkLinearLayout.setOnClickListener { openGithubRepository() }
 
+        featuresLinearLayout.setOnClickListener { openFaqModal() }
+
         return view
+    }
+
+    private fun openFaqModal() {
+        val dialogView: View =
+            LayoutInflater.from(context).inflate(R.layout.features_dialog, null, false)
+        val alertDialog = AlertDialog.Builder(requireContext())
+            .setTitle("Features")
+            .setCancelable(true)
+            .setView(dialogView)
+            .create()
+        alertDialog.show()
     }
 
     private fun openGithubRepository() {
@@ -234,7 +248,8 @@ class SettingsFragment : Fragment() {
             .setNegativeButton(
                 "Cancel"
             ) { dialog, _ -> dialog.cancel() }.create()
-        Objects.requireNonNull(alertDialog.window)?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        Objects.requireNonNull(alertDialog.window)
+            ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         alertDialog.show()
     }
 
@@ -260,5 +275,6 @@ class SettingsFragment : Fragment() {
             view.findViewById(R.id.settingsViewPrivacyPolicyLinearLayout)
         settingsGithubRepoLinkLinearLayout =
             view.findViewById(R.id.settingsGithubRepoLinkLinearLayout)
+        featuresLinearLayout = view.findViewById(R.id.featuresLinearLayout)
     }
 }
