@@ -6,6 +6,8 @@
 
 ![WhatsApp Image 2022-04-26 at 5 57 36 PM](https://user-images.githubusercontent.com/55044774/165881242-fb3790dd-7e21-4d33-9147-be7ab23fd9f2.jpeg)
 
+<a href='https://play.google.com/store/apps/details?id=com.blockgeeks.iitj_auth'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height=90px/></a>
+
 Automates the Firewall Authentication at IITJ. No more sign into network prompts while using IITJ Wifi! This app does everything automatically once started.
 
 ### Screenshots
