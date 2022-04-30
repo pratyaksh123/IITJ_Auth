@@ -2,7 +2,7 @@
 
 > Never spend 10 seconds doing something by hand when you can spend 1 month ~~failing~~ **Succeeding** to automate it.
 > 
-> -Me Probably
+> -Someone
 
 ![WhatsApp Image 2022-04-26 at 5 57 36 PM](https://user-images.githubusercontent.com/55044774/165881242-fb3790dd-7e21-4d33-9147-be7ab23fd9f2.jpeg)
 
