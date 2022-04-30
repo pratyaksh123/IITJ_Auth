@@ -11,7 +11,7 @@
 Automates the Firewall Authentication at IITJ. No more sign into network prompts while using IITJ Wifi! This app does everything automatically once started.
 
 ### Screenshots
-<img src="/Graphics/About.png" width="180" height="370" /> <img src="/Graphics/dashboard_light.png" width="180" height="370" /> <img src="/Graphics/QuickSettigns.png" width="180" height="370" /> <img src="/Graphics/settings_light.png" width="180" height="370" /> <img src="/Graphics/dashboard_dark.png" width="180" height="370" />
+<img src="/Graphics/dashboard_light.png" width="180" height="370" /> <img src="/Graphics/QuickSettigns.png" width="180" height="370" /> <img src="/Graphics/settings_light.png" width="180" height="370" /> <img src="/Graphics/dashboard_dark.png" width="180" height="370" />
 
 ### Features
 - One-time setup hustle.
