@@ -27,7 +27,7 @@
 
         <meta-data
             android:name="io.sentry.environment"
-            android:value="dev" />
+            android:value="production" />
 
         <activity
             android:name=".activities.MainActivity"

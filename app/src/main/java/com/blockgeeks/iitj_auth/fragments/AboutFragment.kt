@@ -32,7 +32,7 @@ class AboutFragment : Fragment() {
     }
 
     private fun openGithubIssues() {
-        val uri = Uri.parse("https://github.com/pratyaksh123/IITJ_Auth/issues")
+        val uri = Uri.parse("https://github.com/pratyaksh123/IITJ_Auth/issues/new/choose")
         val githubIntent = Intent(Intent.ACTION_VIEW, uri)
         githubIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
         startActivity(githubIntent)

@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         val dashboardFragment = DashboardFragment()
         val settingsFragment = SettingsFragment()
         // Obtain the FirebaseAnalytics instance.
-        // TODO: Enable in production
         analytics = Firebase.analytics
         val masterKey = getMasterKey(applicationContext)
         val sharedPreferences = EncryptedSharedPreferences.create(
