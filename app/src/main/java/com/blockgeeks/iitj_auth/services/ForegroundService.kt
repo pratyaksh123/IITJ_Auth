@@ -1,5 +1,6 @@
 package com.blockgeeks.iitj_auth.services
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -9,26 +10,26 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.blockgeeks.iitj_auth.R
 import com.blockgeeks.iitj_auth.activities.MainActivity
-import com.blockgeeks.iitj_auth.utils.authenticate
 import com.blockgeeks.iitj_auth.utils.getMasterKey
-import com.blockgeeks.iitj_auth.workers.LoginInitiatorWorker
-import com.google.firebase.analytics.FirebaseAnalytics
 import io.sentry.Sentry
-import java.util.concurrent.TimeUnit
+import java.util.*
 
 
+const val loginUrl = "http://www.gstatic.com/generate_204"
 const val TAG = "ForegroundService"
 
 class MyForegroundService : Service() {
@@ -65,69 +66,124 @@ class MyForegroundService : Service() {
                 connectivityManager.bindProcessToNetwork(network)
                 Log.i(TAG, "Captive Portal detected")
                 Toast.makeText(applicationContext, "Logging in..", Toast.LENGTH_LONG).show()
-                val response = authenticate(applicationContext, username!!, password!!)
-                if (response == "Success") {
-                    // Dismiss the captive portal using the Captive portal API
-                    Log.i(TAG, "Connected!")
-                    updateNotification("Login Successful! ✅")
-                    Toast.makeText(applicationContext, "Connected!", Toast.LENGTH_LONG).show()
-
-                    // First cancel all work
-                    WorkManager.getInstance(applicationContext)
-                        .cancelUniqueWork("periodicLoginWorkName")
-
-                    // Use WorkManager to schedule work
-                    val periodicLoginWork = PeriodicWorkRequest.Builder(
-                        LoginInitiatorWorker::class.java,
-                        60,
-                        TimeUnit.MINUTES,
-                        5,
-                        TimeUnit.MINUTES
-                    ).build()
-                    WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-                        "periodicLoginWorkName",
-                        ExistingPeriodicWorkPolicy.REPLACE,
-                        periodicLoginWork
-                    )
-
-                } else if (response == "Already Connected") {
-                    // Already Authenticated
-                    Log.i(TAG, "Already Connected!")
-                } else if (response == "Failed") {
-                    Log.i(TAG, "Authentication Failed!")
-                    updateNotification(
-                        "Login Failed! ❌",
-                        "Please check if your username and password are correct."
-                    )
-                    Toast.makeText(applicationContext, "Authentication failed!", Toast.LENGTH_LONG)
-                        .show()
-                } else if (response == "Unknown") {
-                    Log.i(TAG, "Authentication Failed!")
-                    updateNotification("Authentication Failed! ❌")
-                } else {
-                    // res = null states
-                    val parameters = Bundle().apply {
-                        this.putString("level_name", "message")
-                        this.putInt("level_difficulty", 4)
-                    }
-                    FirebaseAnalytics.getInstance(applicationContext)
-                        .logEvent("Auth_failed", parameters)
-
-                    Log.i(TAG, "Authentication Failed! , response null")
-                    updateNotification(
-                        "Authentication Failed! ❌",
-                        "Try toggling the Wifi on/off once."
-                    )
-                }
-
+                loginViaWebView(applicationContext, username!!, password!!)
             }
-
         }
 
         override fun onLost(network: Network) {
             Log.e(TAG, "Lost network")
         }
     }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    fun loginViaWebView(context: Context, username: String, password: String) {
+        val webView = WebView(context)
+        webView.settings.javaScriptEnabled = true
+        webView.loadUrl(loginUrl)
+        var response: String? = null
+
+        webView.webViewClient = object : WebViewClient() {
+            override fun onReceivedError(
+                view: WebView,
+                request: WebResourceRequest,
+                error: WebResourceError
+            ) {
+                super.onReceivedError(view, request, error)
+                Log.e(TAG, "$error")
+                view.destroy()
+            }
+
+            override fun onPageFinished(view: WebView, url: String) {
+                view.evaluateJavascript(
+                    "(" +
+                            "function(){ " +
+                            "var user = document.getElementById('ft_un');" +
+                            "user.value = '" + username + "';" +
+                            "var pwd = document.getElementById('ft_pd');" +
+                            "pwd.value = '" + password + "';" +
+                            "var inputSubmit = document.querySelector(\"input[type='submit']\");" +
+                            "if (inputSubmit) {" +
+                            "inputSubmit.click();" +
+                            "}" +
+                            "var inputButton = document.querySelector(\"button[type='submit']\");" +
+                            "if (inputButton) {" +
+                            "inputButton.click();" +
+                            "}" +
+                            "return document.body.innerHTML;" +
+                            "}" +
+                            ")()", null
+                )
+
+                view.webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(view: WebView, url: String) {
+                        Log.e(TAG, "onPageFinished: " + "login done")
+                        view.evaluateJavascript(
+                            "(function(){ return document.body.innerHTML; })()"
+                        ) { htmlDocumentString ->
+                            if (htmlDocumentString != null) {
+                                if (htmlDocumentString.lowercase(Locale.getDefault())
+                                        .contains("Keepalive".lowercase(Locale.getDefault()))
+                                ) {
+                                    Log.i(TAG, "Connected!")
+                                    updateNotification("Login Successful! ✅")
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Connected!",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                } else if (htmlDocumentString.lowercase(Locale.getDefault())
+                                        .contains("over limit".lowercase(Locale.getDefault()))
+                                ) {
+                                    updateNotification(
+                                        "Over Limit! ⚠️",
+                                    )
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Authentication failed!",
+                                        Toast.LENGTH_LONG
+                                    )
+                                        .show()
+                                    Log.i(TAG, "Over Limit!")
+                                } else if (htmlDocumentString.lowercase(Locale.getDefault())
+                                        .contains("Authentication Failed".lowercase(Locale.getDefault()))
+                                ) {
+                                    Log.i(TAG, "Authentication Failed!")
+                                    updateNotification(
+                                        "Login Failed! ❌",
+                                        "Please recheck if your username and password are correct."
+                                    )
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Authentication failed!",
+                                        Toast.LENGTH_LONG
+                                    )
+                                        .show()
+                                } else {
+                                    Log.i(
+                                        TAG,
+                                        "onReceiveValue: Unknown"
+                                    )
+                                    Log.i(TAG, "Authentication Failed!")
+                                    updateNotification("Authentication Failed! ❌")
+                                }
+                            }
+                        }
+                        destroyWebViewAfterDelay(view)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun destroyWebViewAfterDelay(view: WebView?) {
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            Log.e(TAG, "run: " + "webView destroyed")
+            view?.destroy()
+        }, 5000)
+    }
+
 
     override fun onCreate() {
         val pendingIntent: PendingIntent =
