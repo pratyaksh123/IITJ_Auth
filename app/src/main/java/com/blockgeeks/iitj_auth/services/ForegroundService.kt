@@ -80,7 +80,6 @@ class MyForegroundService : Service() {
         val webView = WebView(context)
         webView.settings.javaScriptEnabled = true
         webView.loadUrl(loginUrl)
-        var response: String? = null
 
         webView.webViewClient = object : WebViewClient() {
             override fun onReceivedError(
@@ -178,7 +177,7 @@ class MyForegroundService : Service() {
 
     private fun destroyWebViewAfterDelay(view: WebView?) {
         val handler = Handler()
-        handler.postDelayed(Runnable {
+        handler.postDelayed({
             Log.e(TAG, "run: " + "webView destroyed")
             view?.destroy()
         }, 5000)
